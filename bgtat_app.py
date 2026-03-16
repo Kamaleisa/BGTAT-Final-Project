@@ -103,16 +103,24 @@ st.title("🛠️ Bespoke Gas Turbine Analysis Tool (BGTAT)")
 
 # Loading your dataset
 
+import os
+
 @st.cache_data
 def load_and_init_data():
-    # Fixed the double C:\ and added the closing quote
-    path = r'C:\Users\Acer\OneDrive\Documents\gas_turbine_fault_detection.csv' 
+    # 1. Get the directory where bgtat_app.py is located
+    base_path = os.path.dirname(__file__)
+    
+    # 2. Try the standard filename first
+    filename = 'gas_turbine_fault_detection.csv'
+    file_path = os.path.join(base_path, filename)
     
     try:
-        df = pd.read_csv(path)
+        df = pd.read_csv(file_path)
     except FileNotFoundError:
-        # Check if the file name has that extra space we saw earlier
-        df = pd.read_csv(path.replace('.csv', ' .csv'))
+        # 3. Fallback for the version with the trailing space
+        filename_alt = 'gas_turbine_fault_detection .csv'
+        file_path_alt = os.path.join(base_path, filename_alt)
+        df = pd.read_csv(file_path_alt)
         
     df.columns = df.columns.str.strip()
     return df
